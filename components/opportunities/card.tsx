@@ -1,0 +1,9 @@
+import Link from "next/link";
+import {ArrowUpRight,MapPin,CalendarDays,Bookmark} from "lucide-react";
+import {Chip} from "@/components/ui";
+import {deadline,dateLabel} from "@/lib/utils/dates";
+import {CATEGORIES} from "@/lib/catalog";
+import type {Opportunity} from "@/types/domain";
+export function MatchBadge({score}:{score:number}){return <span className="match-badge">✦ {score}% match</span>;}
+export function DeadlineBadge({value}:{value:string|null}){return <span className="deadline">◷ {deadline(value)}</span>;}
+export function OpportunityCard({opportunity:o,match,saveControl}:{opportunity:Opportunity;match?:{score:number;reasons:string[]};saveControl?:React.ReactNode}){return <article className="opportunity-card"><div className="card-kicker"><span className={`category category-${o.category}`}>{CATEGORIES.find(c=>c.slug===o.category)?.name||o.category}</span>{match&&<MatchBadge score={match.score}/>}</div><h3><Link href={`/opportunity/${o.slug}`}>{o.title}</Link></h3><p className="organizer-name">{o.organizer_name||'Organizer to be confirmed'}</p><div className="card-meta"><span><MapPin size={13}/>{o.is_online?'Online':o.city}{o.is_hybrid?' · Hybrid':''}</span><span><CalendarDays size={13}/>{dateLabel(o.start_at)}</span></div><div className="tags">{o.topics.slice(0,2).map(t=><Chip key={t}>{t.replaceAll('-',' ')}</Chip>)}{o.is_free&&<Chip>Free</Chip>}{o.student_eligible&&<Chip>Students</Chip>}</div>{match&&<div className="match-reason"><span>✧ Why this matches you</span><p>{match.reasons.slice(0,3).join(' · ')||'Worth exploring outside your usual interests'}</p></div>}<div className="card-actions"><DeadlineBadge value={o.registration_deadline}/><div>{saveControl||<Link className="icon-button" href="/login" aria-label={`Sign in to save ${o.title}`}><Bookmark size={16}/></Link>}<Link className="view-button" href={`/opportunity/${o.slug}`}>View <ArrowUpRight size={14}/></Link></div></div></article>;}
