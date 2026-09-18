@@ -3,7 +3,7 @@
 The authoritative brief is preserved in SPECIFICATION.txt. Work proceeds in its eight phases, with typecheck, lint, tests and production build required at each checkpoint.
 
 1. Foundation, authentication and identity RLS — passed typecheck, lint, 2 tests and production build.
-2. Core opportunity database and development seed — pending.
+2. Core opportunity database and development seed — passed typecheck, lint, 3 tests and production build.
 3. Onboarding and deterministic recommendations — pending.
 4. Explore, search, details and saved opportunities — pending.
 5. Source ingestion, normalization, deduplication and schedules — pending.

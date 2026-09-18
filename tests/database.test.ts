@@ -23,3 +23,11 @@ test('migrations apply and RLS isolates profiles; metadata cannot make an admin'
  await expect(db.exec(`update profiles set id='${b}' where id='${a}'`)).rejects.toThrow();
  await db.close();
 });
+test('public catalogue excludes review and fictional rows and keeps source configuration private',async()=>{
+ const db=await testDatabase();
+ await db.exec(`insert into opportunities(slug,title,category,status) values('public','Public workshop','workshops','active'),('review','Review workshop','workshops','needs_review'); insert into opportunities(slug,title,category,status,is_demo) values('demo','Demo workshop','workshops','active',true); set role anon;`);
+ expect((await db.query('select slug from opportunities')).rows).toEqual([{slug:'public'}]);
+ await expect(db.query('select * from sources')).rejects.toThrow();
+ await expect(db.exec("insert into opportunities(slug,title,category) values('bad','Bad workshop','workshops')")).rejects.toThrow();
+ await db.close();
+});
