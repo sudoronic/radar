@@ -23,3 +23,14 @@ export async function candidates(profile:Profile,prefs:Preferences,offset=0):Pro
  const {data,error}=await db.rpc('recommendation_candidates',{p_city:profile.city,p_country:profile.country,p_online:prefs.include_online,p_travel:prefs.travel,p_categories:prefs.categories,p_interests:prefs.interests,p_offset:offset}).overrideTypes<Opportunity[],{merge:false}>();
  if(error)throw new Error(error.message);return data||[];
 }
+
+export async function savedIds(ids:string[]){
+ if(!configured()||demoEnabled()||!ids.length)return new Set<string>();
+ const db=await supabase();const {data:{user}}=await db.auth.getUser();if(!user)return new Set<string>();
+ const {data,error}=await db.from('saved_opportunities').select('opportunity_id').eq('user_id',user.id).in('opportunity_id',ids);if(error)throw new Error(error.message);
+ return new Set((data||[]).map(s=>s.opportunity_id));
+}
+export async function opportunity(slug:string){
+ if(demoEnabled())return demoOpportunities().find(o=>o.slug===slug)||null;
+ if(!configured())return null;const db=await supabase();const {data,error}=await db.from('opportunities').select('*').eq('slug',slug).maybeSingle();if(error)throw new Error(error.message);return data;
+}

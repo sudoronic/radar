@@ -2,6 +2,7 @@ import type {Opportunity,Profile,Organizer,Source,SourceEvidence,Preferences} fr
 export type Json=string|number|boolean|null|{[key:string]:Json|undefined}|Json[];
 type Table<T>={Row:{[K in keyof T]:T[K]};Insert:Partial<T>;Update:Partial<T>;Relationships:[]};
 export type Database={public:{Tables:{
+ saved_opportunities:Table<{user_id:string;opportunity_id:string;created_at:string}>;
  profiles:Table<Profile>;
  organizers:Table<Organizer>;
  sources:Table<Source>;
@@ -15,6 +16,8 @@ export type Database={public:{Tables:{
  user_categories:Table<{user_id:string;category_slug:string}>;
  user_preferences:Table<Omit<Preferences,'interests'|'categories'>&{notification_cursor:string}>;
 };Views:Record<string,never>;Functions:{
+ search_opportunities:{Args:{filters:Json;page_number:number};Returns:Opportunity[]};
+ saved_feed:{Args:{sort_by:string;page_number:number};Returns:Opportunity[]};
  is_admin:{Args:Record<string,never>;Returns:boolean};
  save_preferences:{Args:{p:Json;interest_ids:string[];category_ids:string[]};Returns:undefined};
  recommendation_candidates:{Args:{p_city:string;p_country:string;p_online:boolean;p_travel:boolean;p_categories:string[];p_interests:string[];p_offset:number};Returns:Opportunity[]};

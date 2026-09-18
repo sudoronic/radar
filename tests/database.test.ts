@@ -31,3 +31,13 @@ test('public catalogue excludes review and fictional rows and keeps source confi
  await expect(db.exec("insert into opportunities(slug,title,category) values('bad','Bad workshop','workshops')")).rejects.toThrow();
  await db.close();
 });
+test('full text search and saved opportunity ownership work in PostgreSQL',async()=>{
+ const db=await testDatabase();const a='11111111-1111-4111-8111-111111111111',b='22222222-2222-4222-8222-222222222222',o='33333333-3333-4333-8333-333333333333';
+ await db.exec(`insert into auth.users(id) values('${a}'),('${b}'); insert into opportunities(id,slug,title,category,organizer_name,city,topics,status) values('${o}','ai','Build something new','hackathons','Future Lab','Lahore',ARRAY['artificial-intelligence'],'active'); set role authenticated; select set_config('request.jwt.claim.sub','${a}',false); insert into saved_opportunities(user_id,opportunity_id) values('${a}','${o}');`);
+ expect((await db.query(`select * from search_opportunities('{"q":"Future Lab"}',0)`)).rows).toHaveLength(1);
+ expect((await db.query(`select * from search_opportunities('{"q":"Karachi"}',0)`)).rows).toHaveLength(0);
+ expect((await db.query(`select * from saved_feed('recent',0)`)).rows).toHaveLength(1);
+ await db.exec(`select set_config('request.jwt.claim.sub','${b}',false)`);
+ expect((await db.query('select * from saved_opportunities')).rows).toHaveLength(0);
+ await expect(db.exec(`insert into saved_opportunities(user_id,opportunity_id) values('${a}','${o}')`)).rejects.toThrow();await db.close();
+});

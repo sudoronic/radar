@@ -5,7 +5,7 @@ The authoritative brief is preserved in SPECIFICATION.txt. Work proceeds in its 
 1. Foundation, authentication and identity RLS — passed typecheck, lint, 2 tests and production build.
 2. Core opportunity database and development seed — passed typecheck, lint, 3 tests and production build.
 3. Onboarding and deterministic recommendations — passed typecheck, lint, 7 tests and production build.
-4. Explore, search, details and saved opportunities — pending.
+4. Explore, search, details and saved opportunities — passed typecheck, lint, 8 tests and production build.
 5. Source ingestion, normalization, deduplication and schedules — pending.
 6. Notifications, calendar, behavior and reports — pending.
 7. Admin and moderation — pending.

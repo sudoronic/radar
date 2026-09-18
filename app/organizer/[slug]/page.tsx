@@ -1,0 +1,7 @@
+import {notFound} from "next/navigation";
+import {supabase,configured} from "@/lib/supabase/server";
+import {Shell} from "@/components/navigation/shell";
+import {OpportunityCard} from "@/components/opportunities/card";
+import {Chip,EmptyState} from "@/components/ui";
+export const dynamic="force-dynamic";
+export default async function Organizer({params}:{params:Promise<{slug:string}>}){if(!configured())notFound();const db=await supabase();const {data:o,error}=await db.from('organizers').select('*').eq('slug',(await params).slug).maybeSingle();if(error)throw new Error(error.message);if(!o)notFound();const {data:items,error:err}=await db.from('opportunities').select('*').eq('organizer_id',o.id).order('start_at',{ascending:false}).limit(20);if(err)throw new Error(err.message);return <Shell city={o.city||'Online'}><div className="page-heading"><div><h1>{o.name}</h1>{o.verified&&<Chip>Organizer verified</Chip>}<p className="muted">{o.description}</p>{o.website&&<a href={o.website} rel="noopener noreferrer" target="_blank">Official website ↗</a>}</div></div><h2>Upcoming opportunities</h2><div className="opportunity-grid">{items?.filter(i=>['active','closing_soon','registration_closed'].includes(i.status)).map(i=><OpportunityCard key={i.id} opportunity={i}/>)}</div><h2>Past opportunities</h2><div className="opportunity-grid">{items?.filter(i=>['completed','archived','cancelled'].includes(i.status)).map(i=><OpportunityCard key={i.id} opportunity={i}/>)}</div>{!items?.length&&<EmptyState title="No opportunities listed yet."/>}</Shell>;}

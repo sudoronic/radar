@@ -1,0 +1,3 @@
+import {z} from "zod";
+export const filtersSchema=z.object({q:z.string().max(200).optional(),category:z.string().max(80).optional(),city:z.string().max(100).optional(),country:z.string().max(2).optional(),organizer:z.string().max(100).optional(),format:z.enum(['','online','in-person','hybrid']).optional(),price:z.enum(['','free','paid']).optional(),audience:z.enum(['','student','professional']).optional(),level:z.enum(['','Beginner','Intermediate','Advanced','Any']).optional(),date:z.union([z.literal(''),z.iso.date()]).optional(),quick:z.enum(['','today','week','closing']).optional()});
+export type Filters=z.infer<typeof filtersSchema>;
