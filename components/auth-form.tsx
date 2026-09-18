@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { authenticate } from "@/app/auth/actions";
+import { Button,Input } from "@/components/ui";
+export function AuthForm({mode,message}:{mode:string;message?:string}) {
+ const title=({signup:"Start your Radar",login:"Welcome back", "forgot-password":"Forgot your password?", "reset-password":"Choose a new password"} as Record<string,string>)[mode];
+ return <main className="auth-wrap"><div className="auth-card"><Link href="/" className="brand">◉ Radar</Link><p className="eyebrow">OPPORTUNITIES FIND YOU</p><h1>{title}</h1><p className="muted">Your next opportunity could change everything.</p>{message&&<p className="notice" role="status">{message}</p>}<form action={authenticate} className="stack"><input type="hidden" name="mode" value={mode}/>{mode!=="reset-password"&&<label>Email<Input name="email" type="email" autoComplete="email" required/></label>}{mode!=="forgot-password"&&<label>Password<Input name="password" type="password" minLength={10} autoComplete={mode==="login"?"current-password":"new-password"} required/></label>}<Button>{mode==="login"?"Log in":mode==="signup"?"Create account":mode==="forgot-password"?"Send reset link":"Update password"} →</Button></form><div className="auth-links"><Link href={mode==="signup"?"/login":"/signup"}>{mode==="signup"?"Already have an account? Log in":"New here? Create account"}</Link><Link href="/forgot-password">Forgot password?</Link></div></div></main>;
+}

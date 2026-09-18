@@ -1,0 +1,2918 @@
+Build a production-ready web application called **Radar**.
+
+Radar is a personalized opportunity-discovery platform for students, young professionals, developers, founders, and other users who want to discover relevant opportunities happening in their city or online.
+
+The product should NOT behave like a generic event directory.
+
+The core idea is:
+
+**“Opportunities find you.”**
+
+Users select their interests, city, background, preferred opportunity categories, budget, experience level, and other preferences. Radar then automatically discovers relevant public opportunities from trusted internet sources, stores them in the database, removes duplicates, keeps them updated, calculates personalized relevance, and shows each user a simple personalized feed.
+
+The application must be extremely simple, fast, aesthetic, responsive, and optimized for free-tier infrastructure.
+
+---
+
+# 1. STRICT TECHNOLOGY CONSTRAINT
+
+The entire infrastructure must use ONLY:
+
+* GitHub
+* GitHub Student / GitHub Pro benefits
+* Vercel Hobby free tier
+* Supabase Free tier
+
+Do not require any paid API, paid database, paid crawler, paid AI service, paid email provider, paid storage provider, Firebase, MongoDB, AWS, Cloudflare Workers, Railway, Render, DigitalOcean, external CMS, Algolia, Redis, Elasticsearch, or other paid infrastructure.
+
+The MVP must remain capable of running at approximately:
+
+**$0/month.**
+
+External public websites, RSS feeds, calendars, JSON feeds, structured webpages, and public APIs may be used only as DATA SOURCES.
+
+They must not become infrastructure dependencies.
+
+Do not require:
+
+* OpenAI API
+* Anthropic API
+* Gemini API
+* ScrapingBee
+* Firecrawl
+* Bright Data
+* Apify
+* SerpAPI
+* Twilio
+* SendGrid
+* OneSignal
+* Firebase Cloud Messaging
+
+The app should remain functional without any paid service.
+
+---
+
+# 2. REQUIRED STACK
+
+Frontend and application framework:
+
+* Next.js
+* TypeScript
+* App Router
+* React
+* Tailwind CSS
+* server components wherever appropriate
+* client components only when interactivity requires them
+
+Hosting:
+
+* Vercel Hobby
+
+Database:
+
+* Supabase PostgreSQL
+
+Authentication:
+
+* Supabase Auth
+
+Backend automation:
+
+* Supabase Edge Functions
+
+Scheduled jobs:
+
+* Supabase Cron
+
+Storage:
+
+* Supabase Storage only where necessary
+
+Search:
+
+* PostgreSQL full-text search
+
+Recommendation engine:
+
+* PostgreSQL filters + TypeScript scoring
+
+Version control:
+
+* GitHub
+
+CI/CD:
+
+* GitHub → Vercel
+
+Database schema:
+
+* Supabase SQL migrations committed inside the GitHub repository
+
+---
+
+# 3. PRODUCT VISION
+
+Radar answers one question:
+
+**“What opportunities are relevant to someone like me right now?”**
+
+A user should not need to constantly search different websites, university pages, society Instagram pages, event platforms, government portals, developer communities, or startup communities.
+
+Radar should continuously monitor trusted public sources and create a personalized opportunity feed.
+
+Example user:
+
+City:
+Lahore
+
+Role:
+University student
+
+Field:
+Computer Science
+
+Interests:
+
+* Artificial Intelligence
+* Programming
+* Web Development
+* Startups
+* Entrepreneurship
+
+Preferred opportunities:
+
+* Hackathons
+* Networking
+* Competitions
+* Workshops
+* Government programs
+* Developer meetups
+
+Experience:
+Beginner / Intermediate
+
+Budget:
+Free or low-cost
+
+Online opportunities:
+Yes
+
+Radar should show that user the most relevant opportunities automatically.
+
+---
+
+# 4. PRODUCT TERMINOLOGY
+
+Internally and throughout the UI, prefer the word:
+
+**Opportunity**
+
+rather than simply:
+
+**Event**
+
+because Radar should support more than physical events.
+
+Supported opportunity types include:
+
+* hackathons
+* coding competitions
+* startup competitions
+* innovation challenges
+* workshops
+* developer meetups
+* networking events
+* conferences
+* seminars
+* bootcamps
+* career fairs
+* university competitions
+* university society events
+* entrepreneurship programs
+* government youth programs
+* scholarships
+* fellowships
+* internships/open houses
+* webinars
+* student programs
+* tech challenges
+* business competitions
+
+The architecture must allow more opportunity types to be added later.
+
+---
+
+# 5. INITIAL MARKET
+
+Design the database globally.
+
+However, the MVP should be optimized first for:
+
+**Lahore, Pakistan**
+
+particularly:
+
+* university students
+* early-career professionals
+* developers
+* founders
+* technology enthusiasts
+
+The architecture should later allow easy expansion to:
+
+* Islamabad
+* Rawalpindi
+* Karachi
+* Faisalabad
+* other Pakistani cities
+* international cities
+
+Do not hardcode Lahore-specific assumptions into core database logic.
+
+---
+
+# 6. CORE USER FLOW
+
+The main user journey should be:
+
+Landing page
+
+→ Create account
+
+→ Complete onboarding
+
+→ Select city
+
+→ Select interests
+
+→ Select opportunity categories
+
+→ Select experience level
+
+→ Select budget preference
+
+→ Select online/in-person preference
+
+→ Radar generates personalized feed
+
+→ User browses opportunities
+
+→ Saves opportunities
+
+→ Marks Interested / Applied / Going / Not Interested
+
+→ Radar learns from user behavior
+
+The user should be able to use the app after onboarding without repeatedly searching manually.
+
+---
+
+# 7. LANDING PAGE
+
+The landing page should be simple and premium.
+
+Hero copy:
+
+**Opportunities you shouldn't miss.**
+
+Supporting copy:
+
+“Radar continuously finds hackathons, competitions, workshops, networking events and other opportunities relevant to you.”
+
+Primary CTA:
+
+**Start my Radar**
+
+Secondary CTA:
+
+**Explore opportunities**
+
+Below the hero explain the product using three simple ideas:
+
+**We find them.**
+
+Radar continuously monitors trusted public sources.
+
+**We match them.**
+
+Opportunities are ranked based on your interests and preferences.
+
+**You don't miss them.**
+
+Deadlines, new matches, and important updates stay visible.
+
+Do not make the landing page overly long.
+
+Avoid excessive marketing animations.
+
+---
+
+# 8. AUTHENTICATION
+
+Use Supabase Auth.
+
+Support:
+
+* email/password authentication
+
+Google OAuth may be supported later but should not be required for the initial MVP.
+
+Required auth pages:
+
+* Sign Up
+* Login
+* Forgot Password
+* Reset Password
+
+After first signup:
+
+redirect the user to onboarding.
+
+Returning users:
+
+redirect to `/for-you`.
+
+---
+
+# 9. ONBOARDING
+
+Onboarding must feel lightweight and visual.
+
+Do not create one giant form.
+
+Use a step-based onboarding flow.
+
+Step 1:
+
+“What describes you?”
+
+Options:
+
+* Student
+* Professional
+* Founder
+* Freelancer
+* Other
+
+Step 2:
+
+“What are you interested in?”
+
+Example selectable interests:
+
+* Artificial Intelligence
+* Programming
+* Web Development
+* Mobile Development
+* Cybersecurity
+* Data Science
+* Startups
+* Entrepreneurship
+* Business
+* Marketing
+* Finance
+* Design
+* Engineering
+* Science
+* Research
+* Leadership
+* Career Development
+
+Allow multiple selections.
+
+Step 3:
+
+“What opportunities do you want?”
+
+Options:
+
+* Hackathons
+* Competitions
+* Workshops
+* Networking
+* Developer Meetups
+* Conferences
+* Career Events
+* Government Programs
+* Scholarships
+* Fellowships
+* Startup Events
+* Bootcamps
+* Webinars
+
+Step 4:
+
+“Where should Radar look?”
+
+Fields:
+
+City
+Country
+
+Checkbox:
+
+Include online opportunities
+
+Step 5:
+
+Experience level:
+
+* Beginner
+* Intermediate
+* Advanced
+* Any
+
+Step 6:
+
+Budget preference:
+
+* Free only
+* Mostly free
+* Under custom amount
+* Any
+
+Step 7:
+
+Show:
+
+**Your Radar is ready.**
+
+Then immediately send the user to their personalized feed.
+
+---
+
+# 10. PRIMARY NAVIGATION
+
+Keep navigation minimal.
+
+Desktop navigation:
+
+* For You
+* Explore
+* Saved
+* Calendar
+
+Right-side items:
+
+* Search
+* Notifications
+* Profile
+
+Mobile navigation:
+
+* For You
+* Explore
+* Saved
+* Profile
+
+Use a bottom navigation bar on small screens.
+
+Do not clutter the interface.
+
+---
+
+# 11. FOR YOU FEED
+
+This is the most important screen.
+
+Route:
+
+`/for-you`
+
+The feed should contain personalized opportunity cards.
+
+Sections may include:
+
+* Closing Soon
+* New for You
+* Best Matches
+* This Week
+* Worth Exploring
+
+Example card:
+
+Hackathon
+
+94% Match
+
+AI Buildathon Lahore
+
+LUMS, Lahore
+
+September 27–28
+
+Apply before September 23
+
+Tags:
+
+AI
+Programming
+Students
+Free
+
+Small section:
+
+**Why this matches you**
+
+* matches AI interest
+* student eligible
+* free
+* located in Lahore
+
+Actions:
+
+* View
+* Save
+
+The user should not see huge descriptions on the feed.
+
+Keep cards compact.
+
+---
+
+# 12. MATCH SCORE
+
+Create a deterministic relevance scoring system.
+
+Do NOT use paid AI.
+
+Example score:
+
+Category match:
++30
+
+Topic/interest match:
++25
+
+Correct city:
++15
+
+Experience level match:
++10
+
+Audience eligibility:
++10
+
+Budget match:
++5
+
+Online/in-person preference:
++5
+
+Maximum possible:
+
+100
+
+Apply penalties:
+
+registration closed:
+-100
+
+wrong audience:
+-30
+
+outside desired city:
+-20
+
+low source confidence:
+-10
+
+very old/unverified listing:
+-20
+
+The precise weights should be configurable in code.
+
+Return a score from:
+
+0–100.
+
+Do not precompute millions of user-event relationships.
+
+Filter candidates first in PostgreSQL.
+
+Example:
+
+active opportunities
+correct location or online
+correct categories
+future deadlines
+relevant interests
+
+Then score only the limited result set.
+
+Cache recommendations only if required later.
+
+---
+
+# 13. USER BEHAVIOR LEARNING
+
+Support actions:
+
+* Save
+* Interested
+* Applied
+* Going
+* Not Interested
+* Hide
+* Hide Organizer
+
+Store those actions.
+
+The matching algorithm should gradually adjust internal preference weights.
+
+Example:
+
+If the user repeatedly saves AI hackathons:
+
+AI interest weight increases.
+
+If the user repeatedly dismisses webinars:
+
+webinar preference weight decreases.
+
+Do not implement machine learning initially.
+
+Use simple numeric preference weights.
+
+---
+
+# 14. EXPLORE PAGE
+
+Route:
+
+`/explore`
+
+Allow users to manually discover opportunities.
+
+Include search.
+
+Search should cover:
+
+* opportunity title
+* organizer
+* category
+* topics
+* city
+* venue
+
+Use PostgreSQL full-text search.
+
+Quick filter chips:
+
+* Today
+* This Week
+* Free
+* Hackathons
+* Networking
+* Workshops
+* Online
+* Closing Soon
+
+Advanced filters:
+
+* Category
+* Date
+* City
+* Country
+* In-person / Online / Hybrid
+* Free / Paid
+* Student / Professional
+* Experience Level
+* Organizer
+
+Filters should work well on mobile.
+
+Use a slide-up filter sheet on mobile.
+
+---
+
+# 15. OPPORTUNITY DETAILS PAGE
+
+Route:
+
+`/opportunity/[slug]`
+
+Display:
+
+Title
+
+Organizer
+
+Match score
+
+Category
+
+Location
+
+Venue
+
+Online / Hybrid status
+
+Start date
+
+End date
+
+Registration deadline
+
+Price
+
+Tags
+
+Primary action:
+
+**Register / Apply**
+
+This opens the official external registration link.
+
+Sections:
+
+About
+
+Why Radar recommends this
+
+Who can participate
+
+Important dates
+
+Venue
+
+Organizer
+
+Source information
+
+Show:
+
+**Last verified: X ago**
+
+Also show source trust information such as:
+
+* Official source
+* Organizer source
+* Multiple sources
+* Recently updated
+
+Do not claim an opportunity is verified unless it has passed the defined verification rules.
+
+---
+
+# 16. SAVED PAGE
+
+Route:
+
+`/saved`
+
+Show:
+
+Saved opportunities
+
+Allow sorting by:
+
+* deadline
+* event date
+* recently saved
+
+Allow actions:
+
+* Remove from Saved
+* Applied
+* Going
+
+---
+
+# 17. CALENDAR PAGE
+
+Route:
+
+`/calendar`
+
+Create a simple built-in calendar view.
+
+Show dates such as:
+
+registration deadlines
+
+event dates
+
+application deadlines
+
+Only show opportunities relevant to the user such as:
+
+saved
+interested
+applied
+going
+
+Do not require Google Calendar integration for the MVP.
+
+---
+
+# 18. NOTIFICATIONS
+
+Create in-app notifications.
+
+No external notification provider.
+
+Notification types:
+
+* New strong match
+* Registration closing soon
+* Event updated
+* Event cancelled
+* Venue changed
+* Registration opened
+* New opportunity from saved organizer
+
+Use a notifications table.
+
+Show unread count in the UI.
+
+---
+
+# 19. PROFILE
+
+Route:
+
+`/profile`
+
+Allow user to update:
+
+name
+role
+field
+city
+country
+interests
+preferred opportunity categories
+experience level
+budget preference
+online preference
+travel preference
+
+Show account settings.
+
+Include:
+
+logout
+
+delete account
+
+---
+
+# 20. ADMIN PANEL
+
+Create protected admin routes.
+
+Route:
+
+`/admin`
+
+The admin panel should NOT become a huge CMS.
+
+Dashboard statistics:
+
+* total opportunities
+* active opportunities
+* archived opportunities
+* total sources
+* crawler failures
+* opportunities requiring review
+* users
+* newly discovered opportunities
+
+Admin sections:
+
+Sources
+
+Opportunities
+
+Organizers
+
+Crawler
+
+Reports
+
+Users
+
+Allow admin to:
+
+* add source
+* edit source
+* disable source
+* force source refresh
+* edit opportunity
+* remove opportunity
+* merge duplicate opportunities
+* verify organizer
+* mark listing as suspicious
+* mark opportunity cancelled
+* review crawler errors
+
+Use role-based authorization.
+
+Admin status must not be stored in editable user metadata.
+
+Use secure application metadata or a private admin-role table.
+
+---
+
+# 21. AUTOMATED OPPORTUNITY DISCOVERY
+
+This is the most important backend system.
+
+Radar must automatically discover opportunities from trusted public sources.
+
+Create a source registry.
+
+Each source should contain:
+
+id
+
+name
+
+domain
+
+base_url
+
+source_type
+
+country
+
+city if relevant
+
+categories
+
+fetch_method
+
+trust_score
+
+refresh_interval
+
+last_checked_at
+
+last_success_at
+
+failure_count
+
+active
+
+Possible fetch methods:
+
+* RSS
+* ICAL
+* JSON
+* JSON_LD
+* PUBLIC_API
+* HTML
+
+Avoid arbitrary broad web crawling.
+
+Prefer known sources.
+
+Example source types:
+
+* university
+* student society
+* technology community
+* incubator
+* government portal
+* startup organization
+* conference
+* event platform
+* developer community
+* professional organization
+
+---
+
+# 22. SOURCE REFRESH SYSTEM
+
+Use Supabase Cron.
+
+Do not attempt to refresh every source constantly.
+
+Each source should have:
+
+refresh_interval_minutes
+
+next_refresh_at
+
+The scheduler should select only sources that are due.
+
+Example process:
+
+Cron runs hourly.
+
+↓
+
+Query active sources where:
+
+`next_refresh_at <= NOW()`
+
+↓
+
+Take small batch
+
+↓
+
+Invoke Edge Function
+
+↓
+
+Fetch source
+
+↓
+
+Extract opportunities
+
+↓
+
+Normalize
+
+↓
+
+Store/update
+
+↓
+
+Calculate next refresh time
+
+Use small batches to stay safely inside Supabase free-tier execution limits.
+
+---
+
+# 23. FREE-TIER OPTIMIZATION
+
+This requirement is extremely important.
+
+The crawler must minimize:
+
+* database writes
+* network requests
+* Edge Function runtime
+* duplicate processing
+
+Store fields such as:
+
+etag
+
+last_modified
+
+content_hash
+
+last_checked_at
+
+last_changed_at
+
+When the source supports:
+
+ETag or Last-Modified
+
+use conditional requests.
+
+If content hash has not changed:
+
+skip reprocessing.
+
+Do not repeatedly parse unchanged pages.
+
+Do not refresh normal event pages every few minutes.
+
+Most sources can be checked every few hours or once daily.
+
+High-priority sources may be checked more frequently.
+
+---
+
+# 24. RAW INGESTION
+
+Do not directly insert every crawler result into the final opportunity table.
+
+Use an ingestion pipeline.
+
+Flow:
+
+Source
+
+↓
+
+Fetch
+
+↓
+
+Raw candidate
+
+↓
+
+Validation
+
+↓
+
+Normalization
+
+↓
+
+Duplicate detection
+
+↓
+
+Opportunity
+
+Create a lightweight raw ingestion table.
+
+Fields:
+
+id
+
+source_id
+
+source_url
+
+raw_title
+
+raw_data
+
+content_hash
+
+fetched_at
+
+processing_status
+
+processing_error
+
+Do NOT store massive HTML documents permanently.
+
+Raw data should be compact.
+
+Delete old processed ingestion records periodically.
+
+---
+
+# 25. NORMALIZED OPPORTUNITY MODEL
+
+Opportunity fields should include:
+
+id
+
+slug
+
+title
+
+summary
+
+description
+
+organizer_id
+
+category
+
+topics
+
+country
+
+city
+
+venue
+
+latitude
+
+longitude
+
+is_online
+
+is_hybrid
+
+start_at
+
+end_at
+
+registration_deadline
+
+registration_url
+
+price_amount
+
+currency
+
+is_free
+
+student_eligible
+
+professional_eligible
+
+experience_level
+
+team_required
+
+status
+
+confidence_score
+
+first_seen_at
+
+last_verified_at
+
+created_at
+
+updated_at
+
+Statuses:
+
+* discovered
+* active
+* closing_soon
+* registration_closed
+* completed
+* cancelled
+* archived
+* needs_review
+
+Expired opportunities should automatically transition.
+
+---
+
+# 26. DUPLICATE DETECTION
+
+Multiple sources may contain the same opportunity.
+
+Do not create duplicate cards.
+
+Create duplicate detection based on:
+
+normalized title
+
+organizer
+
+start date
+
+city
+
+registration URL
+
+Create a normalized fingerprint.
+
+Example:
+
+lowercase title
+
+remove unnecessary punctuation
+
+normalize whitespace
+
+combine organizer
+
+combine start date
+
+combine city
+
+Generate a hash.
+
+If exact fingerprint matches:
+
+merge source information.
+
+For similar events:
+
+use fuzzy title matching in PostgreSQL where practical.
+
+Keep:
+
+`opportunity_sources`
+
+table.
+
+One opportunity may have multiple source records.
+
+More trusted sources should improve confidence.
+
+---
+
+# 27. ORGANIZERS
+
+Create an organizers table.
+
+Fields:
+
+id
+
+name
+
+slug
+
+website
+
+logo_url
+
+description
+
+country
+
+city
+
+verified
+
+created_at
+
+An opportunity belongs to an organizer where known.
+
+Organizer page:
+
+`/organizer/[slug]`
+
+Show:
+
+organizer details
+
+upcoming opportunities
+
+past opportunities
+
+verified status if applicable
+
+---
+
+# 28. TRUST SYSTEM
+
+Every opportunity should have confidence/trust metadata.
+
+Possible signals:
+
+official organizer source
+
+known trusted source
+
+multiple matching sources
+
+recently checked
+
+registration URL matches organizer domain
+
+consistent dates across sources
+
+Possible UI labels:
+
+Official source
+
+Recently updated
+
+Multiple sources
+
+Organizer verified
+
+Never display unsupported claims.
+
+---
+
+# 29. DATABASE TABLES
+
+At minimum implement:
+
+profiles
+
+interests
+
+categories
+
+user_interests
+
+user_categories
+
+user_preferences
+
+countries
+
+cities
+
+organizers
+
+sources
+
+opportunities
+
+opportunity_sources
+
+saved_opportunities
+
+user_opportunity_actions
+
+notifications
+
+crawl_jobs
+
+crawl_logs
+
+raw_ingestion
+
+admin_roles if required
+
+Keep the schema normalized but not unnecessarily complex.
+
+---
+
+# 30. SUPABASE SECURITY
+
+Enable Row Level Security on every exposed user-related table.
+
+Users must only access their own:
+
+profile
+
+preferences
+
+saved opportunities
+
+actions
+
+notifications
+
+Allow public or authenticated read access only where appropriate for opportunities.
+
+Internal crawler tables should not be exposed to the browser.
+
+Internal tables include:
+
+raw_ingestion
+
+crawl_jobs
+
+crawl_logs
+
+private source management data
+
+Never expose:
+
+SUPABASE_SERVICE_ROLE_KEY
+
+Never place private Supabase secrets in frontend JavaScript.
+
+Use environment variables.
+
+Use server-side functions for privileged actions.
+
+Authorization must not rely only on the authenticated role.
+
+Check row ownership using `auth.uid()`.
+
+---
+
+# 31. SEARCH ENGINE
+
+Do not use Algolia.
+
+Use PostgreSQL full-text search.
+
+Search opportunity fields such as:
+
+title
+
+summary
+
+description
+
+organizer
+
+city
+
+venue
+
+topics
+
+category
+
+Create appropriate indexes.
+
+Search results should remain fast.
+
+---
+
+# 32. IMAGE STRATEGY
+
+Avoid storing large numbers of images.
+
+Do not copy every event poster into Supabase Storage.
+
+Prefer remote organizer/event images where legally and technically appropriate.
+
+The UI should work perfectly without images.
+
+Opportunity cards should mainly depend on:
+
+typography
+
+category
+
+tags
+
+spacing
+
+match score
+
+dates
+
+location
+
+Use Supabase Storage only for assets Radar actually owns or needs to permanently store.
+
+---
+
+# 33. UI / UX DIRECTION
+
+The product should feel:
+
+* premium
+* minimal
+* modern
+* calm
+* clean
+* fast
+* focused
+
+Inspiration direction:
+
+Linear
+
+Notion
+
+Apple
+
+modern productivity tools
+
+Do NOT clone their interfaces.
+
+Avoid:
+
+* excessive gradients
+* giant glassmorphism
+* excessive neon
+* excessive animations
+* clutter
+* massive cards
+* too many colors
+
+Use:
+
+* generous whitespace
+* strong typography
+* subtle borders
+* restrained shadows
+* rounded corners
+* clean chips
+* clear information hierarchy
+* subtle hover states
+* excellent skeleton states
+
+Support:
+
+light mode
+
+dark mode
+
+System preference by default.
+
+---
+
+# 34. RESPONSIVE DESIGN
+
+The app must be designed mobile-first.
+
+Test widths such as:
+
+375px
+
+390px
+
+430px
+
+768px
+
+1024px
+
+1440px
+
+Do not simply shrink desktop UI.
+
+Mobile navigation should be intentionally designed.
+
+Cards should remain readable.
+
+Filters should use drawers/sheets.
+
+Admin can be primarily desktop optimized but must remain functional on smaller screens.
+
+---
+
+# 35. ACCESSIBILITY
+
+Use semantic HTML.
+
+Support keyboard navigation.
+
+Use visible focus states.
+
+Use sufficient color contrast.
+
+Add proper labels.
+
+Avoid conveying meaning using color alone.
+
+Use ARIA attributes when required.
+
+---
+
+# 36. PERFORMANCE
+
+The product should be highly optimized.
+
+Use server components where appropriate.
+
+Avoid unnecessary client-side JavaScript.
+
+Use pagination or cursor pagination.
+
+Never load hundreds of opportunities at once.
+
+Typical feed:
+
+10–20 opportunities initially.
+
+Support infinite scroll or “Load More”.
+
+Avoid unnecessary polling.
+
+Events do not need real-time updates every few seconds.
+
+Cache appropriate public data.
+
+Use efficient database indexes.
+
+Avoid N+1 queries.
+
+---
+
+# 37. SEO
+
+Public opportunity pages should be indexable.
+
+Create dynamic metadata.
+
+Every opportunity page should include:
+
+title
+
+description
+
+canonical URL
+
+Open Graph metadata
+
+structured Event schema where appropriate
+
+Organizer pages should also have metadata.
+
+Private pages such as:
+
+For You
+
+Saved
+
+Profile
+
+Admin
+
+should not be indexed.
+
+Generate sitemap for public opportunity and organizer pages.
+
+Generate robots.txt.
+
+---
+
+# 38. ERROR HANDLING
+
+Create:
+
+404 page
+
+500/error state
+
+empty states
+
+network error states
+
+crawler failure states
+
+database error handling
+
+If an external source is temporarily unavailable:
+
+do not delete its existing opportunities.
+
+Increase failure count.
+
+Retry later.
+
+If a source repeatedly fails:
+
+flag for admin review.
+
+---
+
+# 39. EMPTY STATES
+
+Examples:
+
+No personalized opportunities:
+
+“Nothing strong matches your Radar right now.”
+
+Suggest:
+
+* broaden interests
+* include online events
+* explore manually
+
+No saved opportunities:
+
+“Save opportunities and they'll appear here.”
+
+No search results:
+
+“Try removing some filters.”
+
+---
+
+# 40. ARCHIVING
+
+Do not permanently delete old opportunities automatically.
+
+Move them to:
+
+completed
+
+then:
+
+archived
+
+Keep historical data because it may later support:
+
+organizer history
+
+user attendance history
+
+recommendation quality
+
+analytics
+
+However, keep descriptions compact so database size stays manageable.
+
+---
+
+# 41. DATA RETENTION
+
+Because the project must stay inside Supabase Free:
+
+Delete old:
+
+crawler logs
+
+raw ingestion records
+
+temporary processing records
+
+after a reasonable period.
+
+Keep canonical opportunities and useful historical data.
+
+Create cleanup jobs.
+
+---
+
+# 42. PROJECT DIRECTORY
+
+Use a clean project structure similar to:
+
+app/
+
+components/
+
+components/ui/
+
+components/opportunities/
+
+components/navigation/
+
+components/onboarding/
+
+lib/
+
+lib/supabase/
+
+lib/auth/
+
+lib/recommendations/
+
+lib/search/
+
+lib/utils/
+
+types/
+
+supabase/
+
+supabase/migrations/
+
+supabase/functions/
+
+supabase/functions/fetch-source/
+
+supabase/functions/process-opportunities/
+
+supabase/functions/update-statuses/
+
+supabase/functions/generate-notifications/
+
+public/
+
+tests/
+
+README.md
+
+Do not over-engineer folders.
+
+---
+
+# 43. ENVIRONMENT VARIABLES
+
+Create `.env.example`.
+
+Example variables:
+
+NEXT_PUBLIC_SUPABASE_URL
+
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+SUPABASE_SERVICE_ROLE_KEY
+
+Never commit actual secrets.
+
+Document how to configure them in:
+
+local development
+
+Vercel
+
+Supabase Edge Functions
+
+---
+
+# 44. GITHUB
+
+The repository should contain:
+
+README
+
+setup guide
+
+architecture overview
+
+database schema
+
+migration files
+
+Edge Functions
+
+linting
+
+formatting
+
+build scripts
+
+CI workflow
+
+GitHub Actions should run:
+
+typecheck
+
+lint
+
+tests
+
+build
+
+Keep workflows lightweight to preserve GitHub Actions minutes.
+
+---
+
+# 45. VERCEL
+
+Configure project for Vercel Hobby.
+
+Avoid relying on expensive serverless execution.
+
+Use Vercel primarily for:
+
+frontend rendering
+
+Next.js routes
+
+lightweight server operations
+
+Do not implement heavy crawling in Vercel.
+
+Heavy scheduled discovery belongs in Supabase Edge Functions.
+
+---
+
+# 46. SUPABASE CRON JOBS
+
+Create logical jobs such as:
+
+refresh_due_sources
+
+update_opportunity_statuses
+
+generate_user_notifications
+
+cleanup_ingestion_data
+
+archive_old_opportunities
+
+Do not create dozens of unnecessary cron tasks.
+
+Keep workload batched.
+
+---
+
+# 47. INITIAL SOURCE SYSTEM
+
+Do NOT hardcode hundreds of sources into application logic.
+
+Store sources in the database.
+
+Provide admin functionality for adding them.
+
+Seed the database with example sources only.
+
+The system should support future sources without code changes.
+
+---
+
+# 48. MANUAL OPPORTUNITY SUBMISSION
+
+Add a simple public submission page:
+
+`/submit`
+
+Allow organizers/users to suggest opportunities.
+
+Fields:
+
+title
+
+organizer
+
+category
+
+city
+
+event date
+
+registration deadline
+
+registration URL
+
+source URL
+
+description
+
+Submitted opportunities must enter:
+
+needs_review
+
+Do not publish automatically.
+
+This helps Radar grow without relying completely on crawlers.
+
+---
+
+# 49. REPORTING
+
+Users should be able to report:
+
+wrong information
+
+expired registration
+
+scam/suspicious opportunity
+
+duplicate
+
+event cancelled
+
+incorrect location
+
+Create reports table.
+
+Admin can review reports.
+
+---
+
+# 50. ANALYTICS
+
+Do not require external analytics tools for the MVP.
+
+Track lightweight internal metrics such as:
+
+opportunity views
+
+saves
+
+registrations clicked
+
+user actions
+
+source performance
+
+Store aggregated data carefully.
+
+Avoid logging every unnecessary interaction.
+
+---
+
+# 51. CLICK TRACKING
+
+When a user clicks:
+
+Register / Apply
+
+record:
+
+user_id if authenticated
+
+opportunity_id
+
+timestamp
+
+Then redirect to the original official registration URL.
+
+Do not proxy or own registration.
+
+Radar is a discovery platform, not a ticketing platform.
+
+---
+
+# 52. NOT A SOCIAL NETWORK
+
+Do NOT implement:
+
+chat
+
+comments
+
+followers
+
+DMs
+
+social posting
+
+leaderboards
+
+likes
+
+communities
+
+These features are out of scope for MVP.
+
+---
+
+# 53. NOT A TICKETING SYSTEM
+
+Do NOT implement:
+
+payments
+
+ticket sales
+
+booking system
+
+payment gateway
+
+event check-in
+
+QR ticket generation
+
+Radar sends users to the official organizer registration system.
+
+---
+
+# 54. NO AI DEPENDENCY
+
+Do not make AI APIs necessary.
+
+All initial functionality must work using:
+
+structured data parsing
+
+rules
+
+keyword extraction
+
+PostgreSQL
+
+TypeScript
+
+deterministic scoring
+
+If AI is ever added later, it must be optional.
+
+---
+
+# 55. OPPORTUNITY CARD DESIGN
+
+Example layout:
+
+Category badge
+
+Match score
+
+Title
+
+Organizer
+
+City / Online
+
+Date
+
+Registration deadline
+
+3–4 tags maximum
+
+Reason for recommendation
+
+Save icon
+
+View button
+
+Do not display enormous descriptions.
+
+---
+
+# 56. MATCH EXPLANATION
+
+Do not only show:
+
+94%
+
+Explain it.
+
+Example:
+
+**Why this matches you**
+
+AI-related
+
+Computer Science students eligible
+
+Free registration
+
+In Lahore
+
+This gives users trust in recommendations.
+
+---
+
+# 57. DEADLINE UX
+
+Deadlines are extremely important.
+
+Show visually:
+
+Closing today
+
+1 day left
+
+3 days left
+
+Registration closed
+
+Do not exaggerate urgency.
+
+Use factual deadline data.
+
+---
+
+# 58. FRESHNESS
+
+Show:
+
+Last checked
+
+Last verified
+
+If an opportunity has not been verified recently:
+
+show a subtle warning.
+
+Example:
+
+“Information last checked 9 days ago. Confirm details on the organizer website.”
+
+---
+
+# 59. SOURCE PRIORITY
+
+Prefer structured sources in this order:
+
+Public official APIs
+
+RSS
+
+iCal
+
+JSON
+
+JSON-LD Event schema
+
+Structured HTML
+
+Generic HTML
+
+Avoid fragile scraping where better structured data exists.
+
+---
+
+# 60. PAGE CHANGE DETECTION
+
+Before parsing full content:
+
+check:
+
+ETag
+
+Last-Modified
+
+content hash
+
+Skip unchanged content.
+
+This is essential for free-tier efficiency.
+
+---
+
+# 61. CRAWLER SAFETY
+
+Respect public access restrictions.
+
+Do not attempt to bypass authentication.
+
+Do not bypass anti-bot measures.
+
+Do not scrape private pages.
+
+Do not circumvent CAPTCHAs.
+
+Do not pretend to be a human user.
+
+Do not collect personal user information from websites.
+
+Only collect publicly listed opportunity information.
+
+---
+
+# 62. INITIAL ADMIN SOURCE EXAMPLES
+
+Support future source categories such as:
+
+University event pages
+
+University student societies
+
+Developer communities
+
+Incubators
+
+Government portals
+
+Startup organizations
+
+Conference websites
+
+Public calendars
+
+Community websites
+
+Do not make Radar dependent on any single provider.
+
+---
+
+# 63. MVP DEFINITION
+
+Version 1 should include ONLY:
+
+Authentication
+
+Onboarding
+
+User interests
+
+User preferences
+
+City selection
+
+Opportunity database
+
+Automated source registry
+
+Basic automated ingestion
+
+Normalization
+
+Duplicate detection
+
+Personal matching
+
+For You feed
+
+Explore
+
+Search
+
+Opportunity details
+
+Saved opportunities
+
+Basic calendar
+
+In-app notifications
+
+User actions
+
+Admin dashboard
+
+Source management
+
+Reports
+
+Manual submission
+
+Responsive UI
+
+Dark mode
+
+Do not add unnecessary features before these work properly.
+
+---
+
+# 64. SUCCESS CRITERIA
+
+The MVP is successful if:
+
+A user can create an account.
+
+Complete onboarding.
+
+Choose interests.
+
+Choose a city.
+
+Receive personalized opportunities.
+
+Search opportunities.
+
+Save opportunities.
+
+Open official registration links.
+
+See deadlines.
+
+Receive basic in-app notifications.
+
+Crawler jobs can automatically ingest opportunities.
+
+Duplicate events are minimized.
+
+Admins can monitor source failures.
+
+The application works properly on desktop and mobile.
+
+The infrastructure remains inside free-tier limits.
+
+---
+
+# 65. DEVELOPMENT ORDER
+
+Build the system in this order.
+
+Phase 1:
+
+Project setup
+
+Next.js
+
+Tailwind
+
+Supabase connection
+
+Auth
+
+database migrations
+
+RLS
+
+Phase 2:
+
+Core database
+
+opportunities
+
+categories
+
+interests
+
+organizers
+
+sources
+
+profiles
+
+Phase 3:
+
+Onboarding
+
+user preferences
+
+For You feed
+
+basic recommendation engine
+
+Phase 4:
+
+Explore
+
+search
+
+filters
+
+opportunity details
+
+saved opportunities
+
+Phase 5:
+
+crawler/source system
+
+Edge Functions
+
+Cron
+
+normalization
+
+duplicate detection
+
+Phase 6:
+
+notifications
+
+calendar
+
+actions
+
+reports
+
+Phase 7:
+
+admin dashboard
+
+source monitoring
+
+manual review
+
+Phase 8:
+
+SEO
+
+performance
+
+accessibility
+
+testing
+
+security review
+
+Do not begin with advanced crawling before the core app and database work.
+
+---
+
+# 66. DESIGN SYSTEM
+
+Create reusable components for:
+
+Button
+
+Input
+
+Select
+
+Checkbox
+
+Radio
+
+Chip
+
+Badge
+
+Card
+
+OpportunityCard
+
+Modal
+
+Drawer
+
+Dropdown
+
+Tabs
+
+Avatar
+
+Tooltip
+
+Skeleton
+
+Toast
+
+EmptyState
+
+SearchBox
+
+FilterSheet
+
+DeadlineBadge
+
+MatchBadge
+
+Do not duplicate styling across pages.
+
+---
+
+# 67. CODE QUALITY
+
+Use strict TypeScript.
+
+Avoid `any` unless truly unavoidable.
+
+Create proper database types.
+
+Use clear names.
+
+Avoid giant components.
+
+Avoid giant utility files.
+
+Add comments only where logic is not obvious.
+
+Do not generate unnecessary abstraction.
+
+Do not over-engineer.
+
+---
+
+# 68. TESTING
+
+Add tests for critical systems.
+
+At minimum:
+
+recommendation scoring
+
+opportunity status calculation
+
+deadline calculation
+
+duplicate fingerprinting
+
+URL validation
+
+source parsing utilities
+
+authorization-sensitive server logic
+
+Add basic smoke tests for major pages where practical.
+
+---
+
+# 69. DATABASE INDEXES
+
+Create useful indexes for:
+
+opportunity status
+
+start date
+
+registration deadline
+
+city
+
+country
+
+category
+
+organizer
+
+created_at
+
+updated_at
+
+source
+
+full-text search
+
+user saved opportunities
+
+user actions
+
+Do not add excessive indexes.
+
+---
+
+# 70. DATABASE CONSTRAINTS
+
+Use:
+
+foreign keys
+
+unique constraints
+
+check constraints
+
+not-null constraints
+
+where appropriate.
+
+Prevent duplicate:
+
+user interest selections
+
+saved opportunity records
+
+source relationships
+
+---
+
+# 71. DEMO DATA
+
+Create development seed data.
+
+Include realistic fictional opportunities such as:
+
+Lahore AI Hackathon
+
+Developer Meetup Lahore
+
+Startup Weekend Lahore
+
+Cybersecurity Workshop
+
+Student Entrepreneurship Challenge
+
+Government Youth Technology Program
+
+Do not present fictional events as real production opportunities.
+
+Clearly mark seeds as development data.
+
+---
+
+# 72. README
+
+README must explain:
+
+What Radar is
+
+Product vision
+
+Architecture
+
+Technology stack
+
+Local setup
+
+Supabase setup
+
+Environment variables
+
+Database migrations
+
+Edge Functions
+
+Cron
+
+Vercel deployment
+
+GitHub workflow
+
+Free-tier design decisions
+
+Security considerations
+
+How to add new sources
+
+How recommendation scoring works
+
+---
+
+# 73. FREE-TIER GUARDRAILS
+
+Create a small developer document:
+
+`FREE_TIER.md`
+
+Explain how to avoid accidentally increasing infrastructure use.
+
+Rules:
+
+No unnecessary polling.
+
+No giant database queries.
+
+No storing raw pages permanently.
+
+No copying every event image.
+
+No precomputing every user-event match.
+
+No heavy Vercel backend jobs.
+
+Batch crawler tasks.
+
+Cache where useful.
+
+Archive old content.
+
+Delete temporary logs.
+
+Monitor Supabase usage.
+
+Monitor Vercel usage.
+
+Monitor GitHub Actions usage.
+
+---
+
+# 74. PRODUCT PERSONALITY
+
+Radar should feel intelligent without constantly saying:
+
+AI
+
+AI-powered
+
+smart AI
+
+The value should come from the experience.
+
+Preferred language:
+
+“Recommended for you”
+
+“Strong match”
+
+“Why this matches”
+
+“Radar found this”
+
+Avoid unnecessary buzzwords.
+
+---
+
+# 75. BRAND
+
+Temporary product name:
+
+**Radar**
+
+Temporary tagline:
+
+**Opportunities find you.**
+
+Use text branding initially.
+
+Do not spend time building a complicated logo.
+
+Logo concept may simply involve:
+
+Radar
+
+with a small radar/pulse icon.
+
+Keep branding easy to replace later.
+
+---
+
+# 76. FINAL PRODUCT PRINCIPLE
+
+Every feature should answer:
+
+**Does this help users discover relevant opportunities faster?**
+
+If not:
+
+do not add it.
+
+Radar should not become Eventbrite.
+
+Radar should not become LinkedIn.
+
+Radar should not become Instagram.
+
+Radar should not become a university social network.
+
+Radar should become:
+
+**the simplest way to know which opportunities are worth your attention.**
+
+---
+
+# 77. IMPORTANT IMPLEMENTATION INSTRUCTION
+
+Do not try to generate the entire project in one giant uncontrolled pass.
+
+Implement sequentially.
+
+Before making significant changes:
+
+inspect the current repository.
+
+Preserve existing working code.
+
+Use migrations for database changes.
+
+Keep commits logically separated.
+
+After every major phase:
+
+run typecheck
+
+run lint
+
+run tests
+
+run production build
+
+fix errors before continuing.
+
+Never leave placeholder functionality claiming to work.
+
+If something is not yet implemented:
+
+mark it clearly as pending.
+
+Prioritize a stable working MVP over a huge unfinished application.
+
+---
+
+# 78. EXPECTED FINAL RESULT
+
+At completion, I should have a functional Radar MVP where:
+
+I can push the repository to GitHub.
+
+Connect the repository to Vercel.
+
+Connect the project to Supabase.
+
+Configure the documented environment variables.
+
+Run Supabase migrations.
+
+Deploy Edge Functions.
+
+Enable scheduled jobs.
+
+Deploy the Next.js application.
+
+Create an account.
+
+Complete onboarding.
+
+Receive personalized opportunity recommendations.
+
+Browse public opportunities.
+
+Save opportunities.
+
+Use search and filters.
+
+See relevant deadlines.
+
+Open external registration pages.
+
+Use the application on desktop and mobile.
+
+Manage sources through the admin panel.
+
+Automatically ingest opportunities from supported trusted public sources.
+
+And operate the entire MVP using:
+
+**GitHub Student + Vercel Hobby + Supabase Free**
+
+with no required paid infrastructure.
