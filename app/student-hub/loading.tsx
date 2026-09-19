@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="main-content page-loading" aria-busy="true"><div className="loading-line wide"/><div className="loading-line"/><div className="student-grid">{Array.from({length:4},(_,index)=><div className="skeleton" key={index}/>)}</div></main>;}
