@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {notFound} from "next/navigation";
+import type {Metadata} from "next";
 import {Shell} from "@/components/navigation/shell";
 import {SaveButton} from "@/components/opportunities/save-button";
 import {MatchBadge,DeadlineBadge} from "@/components/opportunities/card";
@@ -11,6 +12,7 @@ import {scoreOpportunity} from "@/lib/recommendations/score";
 import {dateLabel} from "@/lib/utils/dates";
 import type {SourceEvidence} from "@/types/domain";
 export const dynamic="force-dynamic";
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const o=await opportunity((await params).slug);if(!o)return {title:"Opportunity not found"};const path=`/opportunity/${o.slug}`;return {title:o.title,description:o.summary||o.description.slice(0,155),alternates:{canonical:path},openGraph:{title:o.title,description:o.summary||o.description.slice(0,155),url:path,type:"website"}};}
 export default async function Detail({params}:{params:Promise<{slug:string}>}){
  const {slug}=await params;const o=await opportunity(slug);if(!o)notFound();const saved=await savedIds([o.id]);let sources:SourceEvidence[]=[];let organizerSlug:string|undefined;
  if(configured()&&!demoEnabled()){const db=await supabase();const {data,error}=await db.from('opportunity_sources').select('*').eq('opportunity_id',o.id).limit(10);if(error)throw new Error(error.message);sources=data||[];if(o.organizer_id){const {data}=await db.from('organizers').select('slug').eq('id',o.organizer_id).maybeSingle();organizerSlug=data?.slug;}}

@@ -6,10 +6,10 @@ The authoritative brief is preserved in SPECIFICATION.txt. Work proceeds in its 
 2. Core opportunity database and development seed — passed typecheck, lint, 3 tests and production build.
 3. Onboarding and deterministic recommendations — passed typecheck, lint, 7 tests and production build.
 4. Explore, search, details and saved opportunities — passed typecheck, lint, 8 tests and production build.
-5. Source ingestion, normalization, deduplication and schedules — pending.
-6. Notifications, calendar, behavior and reports — pending.
-7. Admin and moderation — pending.
-8. SEO, accessibility, performance and security verification — pending.
+5. Source ingestion, normalization, deduplication and schedules — passed typecheck, parser tests, Edge Function checks, and production build.
+6. Notifications, calendar, behavior and reports — passed typecheck, RLS action test, lint, tests and production build.
+7. Admin and moderation — protected dashboard and source controls implemented; passed typecheck, lint, tests and production build.
+8. SEO, performance, accessibility and security verification — metadata, robots, sitemap, RLS, bounded pagination, error states, and free-tier guardrails implemented; final checks passed.
 
 ## Environment
 

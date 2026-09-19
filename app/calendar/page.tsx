@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { Shell } from "@/components/navigation/shell";
+import { viewer } from "@/lib/data";
+import { supabase } from "@/lib/supabase/server";
+import { dateLabel } from "@/lib/utils/dates";
+export const dynamic="force-dynamic"; export const metadata={title:"Calendar",robots:{index:false,follow:false}};
+export default async function Calendar(){const {profile,demo}=await viewer();if(demo)return <Shell city={profile.city} name={profile.name}><p className="notice">Connect Supabase to see your saved opportunity dates.</p></Shell>;const db=await supabase();const {data,error}=await db.rpc("saved_feed",{sort_by:"date",page_number:0});if(error)throw new Error(error.message);return <Shell city={profile.city} name={profile.name}><div className="page-heading"><div><p className="eyebrow">YOUR IMPORTANT DATES</p><h1>Make room for <span>possibility.</span></h1></div></div>{data?.length?<div className="calendar-list">{data.flatMap(o=>[{label:"Registration deadline",date:o.registration_deadline},{label:"Opportunity starts",date:o.start_at}].filter(x=>x.date).map(x=><Link href={`/opportunity/${o.slug}`} key={`${o.id}${x.label}`} className="calendar-row"><span>{dateLabel(x.date)}</span><div><strong>{o.title}</strong><p>{x.label} · {o.city||"Online"}</p></div></Link>))}</div>:<p className="notice">Save or mark opportunities you’re interested in, and their deadlines will appear here.</p>}</Shell>;}
