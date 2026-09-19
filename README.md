@@ -2,7 +2,7 @@
 
 **Opportunities find you.** Radar is a personalized opportunity-discovery app built with Next.js App Router, strict TypeScript, Tailwind, Supabase PostgreSQL/Auth/Edge Functions/Cron, and deterministic recommendations. Infrastructure is restricted to GitHub, Vercel Hobby and Supabase Free. Public websites are data sources only.
 
-Implementation status is tracked in IMPLEMENTATION.md. SPECIFICATION.txt preserves the authoritative brief. No cloud project has been created or deployed.
+Implementation status is tracked in [IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md). SPECIFICATION.txt preserves the authoritative brief. The production app is deployed on Vercel and uses the connected Supabase project.
 
 ## Local setup
 
