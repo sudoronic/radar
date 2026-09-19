@@ -1,0 +1,1 @@
+{"imports":{"@supabase/supabase-js":"npm:@supabase/supabase-js@2.116.0","fast-xml-parser":"npm:fast-xml-parser@5.11.1","linkedom":"npm:linkedom@0.18.13"},"compilerOptions":{"strict":true,"lib":["deno.ns","deno.window","dom","dom.iterable"]},"nodeModulesDir":"auto"}
