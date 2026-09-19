@@ -10,3 +10,4 @@ Radar uses GitHub, Vercel Hobby and Supabase Free only. Do not add paid APIs, ho
 - Use 20-item pages. Avoid polling and real-time subscriptions.
 - Review Supabase database/egress/function usage, Vercel function usage, and GitHub Actions minutes before broadening source coverage.
 - Cron schedules are committed inactive. Configure Vault secrets, deploy functions, then activate them deliberately.
+- Student-resource verification checks at most five official provider pages per run, normally once a week. A failed provider page is retried with exponential backoff and never replaces its verified description automatically.

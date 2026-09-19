@@ -16,7 +16,7 @@ declare
   worker_secret text;
   request_id bigint;
 begin
-  if worker_name not in ('fetch-source', 'process-opportunities', 'update-statuses', 'generate-notifications') then
+  if worker_name not in ('fetch-source', 'process-opportunities', 'update-statuses', 'generate-notifications', 'verify-student-resources') then
     raise exception 'Unknown worker';
   end if;
 

@@ -20,7 +20,7 @@ Official reference: https://supabase.com/docs/guides/auth/auth-smtp
 
 Apply committed migrations in order with `supabase db push` after linking a project. Load `supabase/seed.sql` only for local development; all seed opportunities are explicitly fictional and hidden from public production reads. Deploy the Edge Functions in `supabase/functions`, set `RADAR_CRON_SECRET`, and store `radar_project_url` plus `radar_cron_secret` in Supabase Vault. The committed Cron jobs begin inactive; activate them only after deployment and a manual source test.
 
-Sources are registry-managed. Add structured JSON, RSS, iCal, JSON-LD, public API, or deliberately configured HTML sources in the admin area. The worker respects robots rules, same-domain HTTPS redirects, response limits, conditional requests, and backoff. Public submissions go to `needs_review`.
+Sources are registry-managed. Add structured JSON, RSS, iCal, JSON-LD, public API, or deliberately configured HTML sources in the admin area. The worker respects robots rules, same-domain HTTPS redirects, response limits, conditional requests, and backoff. Public submissions go to `needs_review`. Student benefits and programs use a separate `resource_sources` registry: Radar checks each provider's official page weekly, refreshes the verification date when it remains available, and backs off after failures. It does not invent, rewrite, or publish a new offer from an unverified page.
 
 ## Deployment and security
 
