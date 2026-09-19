@@ -2,16 +2,15 @@
 -- records are not directly updateable.  Install only the guarded dispatcher
 -- here; create schedules after Vault secrets are configured and a manual
 -- source run has succeeded.
-create extension if not exists pg_cron;
-create extension if not exists pg_net with schema extensions;
-create extension if not exists supabase_vault with schema vault;
-
+do $$ begin
+if exists(select 1 from pg_extension where extname='pg_net') and exists(select 1 from pg_extension where extname='supabase_vault') then
+execute $fn$
 create or replace function private.dispatch_worker(worker_name text)
 returns bigint
 language plpgsql
 security definer
 set search_path = ''
-as $$
+as $worker$
 declare
   project_url text;
   worker_secret text;
@@ -34,6 +33,9 @@ begin
   ) into request_id;
   return request_id;
 end;
-$$;
+$worker$;
 
 revoke all on function private.dispatch_worker(text) from public, anon, authenticated;
+$fn$;
+end if;
+end $$;
