@@ -16,6 +16,7 @@ const sourceInput = z.object({
   refresh_interval_minutes: z.coerce.number().int().min(60).max(10080),
   is_official: z.boolean(),
   active: z.boolean(),
+  config: z.string().trim().max(10000).optional(),
 });
 
 export async function createSource(form: FormData) {
@@ -31,6 +32,14 @@ export async function createSource(form: FormData) {
   });
   if (!parsed.success) throw new Error("Check the source details and try again.");
   const value = parsed.data;
+  let config: Record<string, unknown> = {};
+  if (value.config) {
+    try {
+      const candidate: unknown = JSON.parse(value.config);
+      if (!candidate || Array.isArray(candidate) || typeof candidate !== "object") throw new Error();
+      config = candidate as Record<string, unknown>;
+    } catch { throw new Error("Parser configuration must be a JSON object."); }
+  }
   const { error } = await serviceClient().from("sources").insert({
     name: value.name,
     domain: parsedUrl.hostname.toLowerCase(),
@@ -44,7 +53,7 @@ export async function createSource(form: FormData) {
     refresh_interval_minutes: value.refresh_interval_minutes,
     is_official: value.is_official,
     active: value.active,
-    next_refresh_at: new Date().toISOString(),
+    next_refresh_at: new Date().toISOString(), config,
   });
   if (error) throw new Error(error.code === "23505" ? "That source URL already exists." : "Could not create the source.");
   revalidatePath("/admin");
